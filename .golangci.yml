@@ -1,0 +1,22 @@
+linters:
+  # enable some additional (non-default) linters
+  enable:
+    - exportloopref
+    - goconst
+    - gofmt
+    - gosec
+    - govet
+    - misspell
+    - noctx
+    - staticcheck
+    - unconvert
+    - unparam
+    - whitespace
+issues:
+  max-same-issues: 0
+linters-settings:
+  goconst:
+    min-len: 2
+    min-occurrences: 5
+  misspell:
+    locale: GB
