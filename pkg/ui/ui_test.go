@@ -85,18 +85,6 @@ func Test_Router(t *testing.T) {
 					NewUIEvent(UIEnableEvent, "bar", "false"))
 			},
 		},
-		{
-			name: "rename/alias request",
-			uri:  "/api/foo/alias/bar",
-			checks: func(t *testing.T, ui *UI, body string, ch chan UIEvent) {
-				assert.Equal(t,
-					"{\"status\":\"ok\",\"message\":\"set name of foo to bar\"}",
-					body)
-				assert.NotEmpty(t, ch, "event channel should not be empty")
-				assert.Equal(t, <-ch,
-					NewUIEvent(UIRenameEvent, "foo", "bar"))
-			},
-		},
 	}
 
 	for _, tc := range tests {
@@ -137,11 +125,6 @@ func Test_Errors(t *testing.T) {
 			name:  "enable error",
 			uri:   "/api/foo/enable/true",
 			error: "enable/disable request write failed",
-		},
-		{
-			name:  "alias error",
-			uri:   "/api/foo/alias/bar",
-			error: "rename request write failed",
 		},
 	}
 

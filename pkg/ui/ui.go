@@ -34,7 +34,6 @@ func (ui *UI) CreateRouter(stdout io.Writer, ch chan UIEvent) *chi.Mux {
 	router.Route("/api", func(r chi.Router) {
 		r.Get("/create/{def}", ui.getCreateHandler(stdout, ch))
 		r.Get("/{device}/enable/{val}", ui.getEnableDisableHandler(stdout, ch))
-		r.Get("/{device}/alias/{val}", ui.getAliasHandler(stdout, ch))
 	})
 	fs := http.FileServer(http.Dir("static"))
 	router.Handle("/static/*", http.StripPrefix("/static/", fs))
@@ -81,20 +80,6 @@ func (ui *UI) getEnableDisableHandler(stdout io.Writer, ch chan UIEvent) func(w 
 		if err != nil {
 			fmt.Fprintf(stdout,
 				"enable/disable request write failed: %+v\n", err)
-		}
-	}
-}
-
-func (ui *UI) getAliasHandler(stdout io.Writer, ch chan UIEvent) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		device := chi.URLParam(r, "device")
-		val := chi.URLParam(r, "val")
-		ch <- NewUIEvent(UIRenameEvent, device, val)
-		_, err := w.Write([]byte(fmt.Sprintf(
-			"{\"status\":\"ok\",\"message\":\"set name of %s to %s\"}",
-			device, val)))
-		if err != nil {
-			fmt.Fprintf(stdout, "rename request write failed: %+v\n", err)
 		}
 	}
 }
