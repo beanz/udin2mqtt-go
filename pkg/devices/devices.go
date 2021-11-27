@@ -31,32 +31,29 @@ func NewDevices(udins map[string]*udin.UdinDevice) *Devices {
 	}
 }
 
-func kindFromArg(kind string) RelayType {
+func kindFromArg(kind string) (RelayType, error) {
 	switch kind {
 	case "0", "momentaryopenclose":
-		return MomentaryOpenClose
-	default:
-		return UnsupportedRelayType
+		return MomentaryOpenClose, nil
 	}
+	return UnsupportedRelayType, fmt.Errorf("invalid relay type: %s", kind)
 }
 
 func (d *Devices) Create(def []string, enabled bool) (*Device, error) {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	name := def[0]
-	t := kindFromArg(def[1])
-	switch t {
-	case MomentaryOpenClose:
-		d.dev[name] = &Device{
-			Name:    name,
-			Type:    t,
-			Def:     def[2:],
-			Enabled: enabled,
-		}
-		return d.dev[name], nil
-	default:
-		return nil, fmt.Errorf("Unsupported relay type: %s", def[0])
+	t, err := kindFromArg(def[1])
+	if err != nil {
+		return nil, err
 	}
+	d.dev[name] = &Device{
+		Name:    name,
+		Type:    t,
+		Def:     def[2:],
+		Enabled: enabled,
+	}
+	return d.dev[name], nil
 }
 
 func (d *Devices) Update(n Device) {
@@ -95,4 +92,16 @@ func (d *Devices) Types() []string {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	return d.types
+}
+
+func (d *Devices) ActionForDevice(name, cmd string) (*Action, error) {
+	dev := d.Device(name)
+	if dev == nil {
+		return nil, fmt.Errorf("invalid device %s", name)
+	}
+	act, err := dev.Command(cmd)
+	if err != nil {
+		return nil, fmt.Errorf("invalid action on device %s: %w", name, err)
+	}
+	return act, nil
 }

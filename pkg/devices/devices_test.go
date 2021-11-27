@@ -46,4 +46,38 @@ func Test_Create(t *testing.T) {
 
 	devList := devs.Devices()
 	assert.Equal(t, []*Device{dev}, devList)
+
+	assert.Equal(t, "momentaryopenclose", dev.Type.String())
+
+	assert.False(t, dev.Enabled)
+	devs.EnableDisable("foobar", true)
+	assert.True(t, dev.Enabled)
+
+	act, err := devs.ActionForDevice("foobar", "OPEN")
+	assert.NoError(t, err)
+	assert.Equal(t, "udin_8r[1].pulse", act.String())
+
+	act, err = devs.ActionForDevice("foobar", "close")
+	assert.NoError(t, err)
+	assert.Equal(t, "udin_8r[2].pulse", act.String())
+
+	_, err = devs.ActionForDevice("quux", "open")
+	assert.Error(t, err)
+
+	_, err = devs.ActionForDevice("foobar", "baz")
+	assert.Error(t, err)
+}
+
+func Test_CreateError(t *testing.T) {
+	u8r, err := udin.NewUdin("mock", nil)
+	assert.NoError(t, err)
+	udins := map[string]*udin.UdinDevice{
+		"udin_8r": u8r,
+	}
+	devs := NewDevices(udins)
+	_, err = devs.Create(
+		[]string{"foobar", "99", "udin_8r-r1", "udin_8r-r2"}, false)
+	assert.Error(t, err)
+
+	assert.Equal(t, "unsupportedrelaytype", UnsupportedRelayType.String())
 }

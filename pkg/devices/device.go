@@ -35,8 +35,12 @@ type Device struct {
 
 type Action struct {
 	Udin   string
-	Relay  int
+	Relay  uint
 	Action string
+}
+
+func (a *Action) String() string {
+	return fmt.Sprintf("%s[%d].%s", a.Udin, a.Relay, a.Action)
 }
 
 func (d *Device) Command(cmd string) (*Action, error) {
@@ -56,7 +60,7 @@ func (d *Device) Command(cmd string) (*Action, error) {
 		if err != nil {
 			return nil, fmt.Errorf("invalid instance %s: %w", rs[1], err)
 		}
-		return &Action{Udin: rs[0], Relay: i, Action: "pulse"}, nil
+		return &Action{Udin: rs[0], Relay: uint(i), Action: "pulse"}, nil
 	default:
 		return nil, fmt.Errorf("unsupported device type for command on %s: %s",
 			d.Name, d.Type)

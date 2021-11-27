@@ -226,24 +226,16 @@ LOOP:
 		case msg := <-msgs:
 
 			topic := msg.Topic
-			ts := strings.Split(topic, "/")
-			action := ts[len(ts)-1]
-			devName := ts[len(ts)-2]
 			cmd := string(msg.Body.([]byte))
-			logger.Printf("mqtt < %s: %s / %s: %s\n",
-				topic, devName, action, cmd)
-			dev := devices.Device(devName)
-			if dev == nil {
-				logger.Printf("invalid device %s\n", devName)
-				continue
-			}
-			act, err := dev.Command(cmd)
+			logger.Printf("mqtt < %s: %s\n", topic, cmd)
+			ts := strings.Split(topic, "/")
+			devName := ts[len(ts)-2]
+			act, err := devices.ActionForDevice(devName, cmd)
 			if err != nil {
-				logger.Printf("invalid action on device %s: %s\n",
-					devName, err)
+				logger.Printf("command failed: %s\n", err)
 				continue
 			}
-			logger.Printf("action: %+v\n", act)
+			logger.Printf("Found action: %s\n", act)
 			u := udins[act.Udin]
 			if u == nil {
 				logger.Printf("invalid UDIN %s for %s\n", act.Udin, devName)
@@ -252,22 +244,10 @@ LOOP:
 			switch act.Action {
 			case "pulse":
 				go func() {
-					_, err := u.Send(udin.UdinRequest{
-						Command: udin.UdinOn, Instance: act.Relay,
-					})
+					err := u.Pulse(act.Relay, time.Second)
 					if err != nil {
-						logger.Printf("error writing on pulse to UDIN %s: %s\n",
-							devName, err)
-						return
-					}
-					time.Sleep(time.Second)
-					_, err = u.Send(udin.UdinRequest{
-						Command: udin.UdinOff, Instance: act.Relay,
-					})
-					if err != nil {
-						logger.Printf("error writing off pulse to UDIN %s: %s\n",
-							devName, err)
-						return
+						logger.Printf("failed to pulse relay %d on %s: %s\n",
+							act.Relay, act.Udin, err)
 					}
 				}()
 			default:

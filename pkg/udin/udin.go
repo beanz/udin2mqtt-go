@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"strings"
+	"time"
 
 	"github.com/acomagu/bufpipe"
 	"github.com/tarm/serial"
@@ -24,7 +25,7 @@ const (
 
 type UdinRequest struct {
 	Command  UdinCommand
-	Instance int
+	Instance uint
 }
 
 func (r UdinRequest) String() string {
@@ -199,4 +200,29 @@ func NewUdin(dev string, logger *log.Logger) (*UdinDevice, error) {
 		return NewUdinMock(dev, logger)
 	}
 	return NewUdinSerial(dev, logger)
+}
+
+func (u *UdinDevice) On(r uint) error {
+	if r > u.numRelays {
+		return fmt.Errorf("invalid relay %d", r)
+	}
+	_, err := u.Send(UdinRequest{Command: UdinOn, Instance: r})
+	return err
+}
+
+func (u *UdinDevice) Off(r uint) error {
+	if r > u.numRelays {
+		return fmt.Errorf("invalid relay %d", r)
+	}
+	_, err := u.Send(UdinRequest{Command: UdinOff, Instance: r})
+	return err
+}
+
+func (u *UdinDevice) Pulse(r uint, d time.Duration) error {
+	err := u.On(r)
+	if err != nil {
+		return err
+	}
+	time.Sleep(d)
+	return u.Off(r)
 }

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"log"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -152,4 +153,60 @@ read: ? [63 13 10]
 read model: UDIN-8R 8 x Relay V1.0 [85 68 73 78 45 56 82 32 56 32 120 32 82 101 108 97 121 32 86 49 46 48 13 10]
 `,
 		buf.String())
+}
+
+func Test_On(t *testing.T) {
+	var buf bytes.Buffer
+	logger := log.New(&buf, "", 0)
+	u, err := NewUdin("mock", logger)
+	assert.NoError(t, err)
+	defer u.Close()
+	err = u.On(1)
+	assert.NoError(t, err)
+	assert.Equal(t, `read: ? [63 13 10]
+read model: UDIN-8R 8 x Relay V1.0 [85 68 73 78 45 56 82 32 56 32 120 32 82 101 108 97 121 32 86 49 46 48 13 10]
+found device udin-8r: UDIN-8R 8 x Relay V1.0
+read: n1 [110 49 13 10]
+`,
+		buf.String())
+	err = u.On(99)
+	assert.Error(t, err)
+}
+
+func Test_Off(t *testing.T) {
+	var buf bytes.Buffer
+	logger := log.New(&buf, "", 0)
+	u, err := NewUdin("mock", logger)
+	assert.NoError(t, err)
+	defer u.Close()
+	err = u.Off(3)
+	assert.NoError(t, err)
+	assert.Equal(t, `read: ? [63 13 10]
+read model: UDIN-8R 8 x Relay V1.0 [85 68 73 78 45 56 82 32 56 32 120 32 82 101 108 97 121 32 86 49 46 48 13 10]
+found device udin-8r: UDIN-8R 8 x Relay V1.0
+read: f3 [102 51 13 10]
+`,
+		buf.String())
+	err = u.Off(99)
+	assert.Error(t, err)
+}
+
+func Test_Pulse(t *testing.T) {
+	var buf bytes.Buffer
+	logger := log.New(&buf, "", 0)
+	u, err := NewUdin("mock", logger)
+	assert.NoError(t, err)
+	defer u.Close()
+	err = u.Pulse(3, time.Millisecond)
+	assert.NoError(t, err)
+	assert.Equal(t, `read: ? [63 13 10]
+read model: UDIN-8R 8 x Relay V1.0 [85 68 73 78 45 56 82 32 56 32 120 32 82 101 108 97 121 32 86 49 46 48 13 10]
+found device udin-8r: UDIN-8R 8 x Relay V1.0
+read: n3 [110 51 13 10]
+read: f3 [102 51 13 10]
+`,
+		buf.String())
+
+	err = u.Pulse(99, time.Millisecond)
+	assert.Error(t, err)
 }
