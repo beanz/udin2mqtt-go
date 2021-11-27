@@ -162,10 +162,16 @@ func (u *UdinDevice) Send(r UdinRequest) (string, error) {
 		return "", fmt.Errorf("udin model read failed: %+v", err)
 	}
 	if u.logger != nil {
-		u.logger.Printf("read model: %s %v\n", model[:len(s)-2], []byte(model))
+		u.logger.Printf("read model: %s %v\n",
+			model[:len(model)-2], []byte(model))
 	}
 	u.model = model[:len(model)-2]
 	return model[:len(model)-2], nil
+}
+
+func (u *UdinDevice) String() string {
+	return fmt.Sprintf("%s: %s (r=%d i=%d)",
+		u.Name(), u.Model(), u.NumRelays(), u.NumInputs())
 }
 
 func (u *UdinDevice) Close() error {
