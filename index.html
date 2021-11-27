@@ -1,0 +1,79 @@
+<html>
+  <head>
+    <title>App</title>
+    <link rel="stylesheet" href="/static/style.css?v={{.Seed}}" />
+  </head>
+  <body>
+    <script
+       type="text/javascript"
+       src="/static/form.js?v={{.Seed}}">
+    </script>
+    <header>
+      <h1>App</h1>
+      <hr/>
+    </header>
+    <div id="messages"></div>
+    <div id="content">
+      <h2>Devices</h2>
+      <table class="devices">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Definition</th>
+            <th>Enabled</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{range $ent := .Devices.Devices }}
+          <tr>
+            <td>{{ $ent.Name }}</td>
+            <td>{{ $ent.Type }}</td>
+            <td>{{ $ent.Def }}</td>
+            <td>
+              <input class="enableDisable"
+                     type="checkbox"
+                     x-device="{{$ent.Name}}"
+                     {{ if $ent.Enabled }}checked{{end}} />
+            </td>
+          </tr>
+          {{end}}
+        </tbody>
+      </table>
+
+      <h2>Create</h2>
+      <form>
+        <label for="name">Name: </label>
+        <input type="text" value="udin_device" />
+        <label for="open">Open: </label>
+        <select id="open" name="open">
+          {{ range $relay := .Devices.Relays }}
+          <option value="{{$relay}}">{{$relay}}</option>
+          {{ end }}
+        </select>
+        <label for="close">Close: </label>
+        <select id="close" name="close">
+          {{ range $relay := .Devices.Relays }}
+          <option value="{{$relay}}">{{$relay}}</option>
+          {{ end }}
+        </select>
+        <br/>
+        <label for="type">Type: </label>
+        <select id="type" name="type">
+          {{ range $i, $type := .Devices.Types }}
+          <option value="{{$i}}">{{$type}}</option>
+          {{ end }}
+        </select>
+        <br/>
+        <input type="button" class="createRelay" value="Create" />
+      </form>
+    </div>
+    <footer>
+      <hr/>
+      <div>App v{{ .Version }}</div>
+    </footer>
+    <script type="text/javascript">
+      load();
+    </script>
+  </body>
+</html>
