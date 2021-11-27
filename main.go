@@ -98,8 +98,7 @@ func run(args []string, stdout io.Writer, v *viper.Viper) error {
 			return fmt.Errorf("failed to open udin device %s: %+v", tty, err)
 		}
 		name := uidSafe(u.Name())
-		logger.Printf("found UDIN device %s: %s\n (r=%d, i=%d)",
-			name, u.Model(), u.NumRelays(), u.NumInputs())
+		logger.Printf("found UDIN device %s\n", u)
 		udins[name] = u
 	}
 
