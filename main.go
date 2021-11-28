@@ -127,6 +127,7 @@ func run(args []string, stdout io.Writer, v *viper.Viper) error {
 			return fmt.Errorf("failed to generate discovery message: %w",
 				err)
 		}
+		msg.Retain = true
 		msgp <- msg
 	}
 
@@ -205,6 +206,7 @@ LOOP:
 						err)
 					continue
 				}
+				msg.Retain = true
 				msgp <- msg
 			case ui.UICreateEvent:
 				dev, err := devices.Create(uie.Args, false)
