@@ -99,6 +99,7 @@ func (d *Device) DiscoveryMessage(cfg types.SimpleStringConfig) (*mqtt.Msg, erro
 				Device:       defaultHADevice,
 				Availability: defaultAvailability,
 				UniqueID:     d.Name,
+				Name:         d.Name,
 				Icon:         icon,
 			},
 		}, nil

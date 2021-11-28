@@ -52,6 +52,7 @@ func Test_DiscoveryMessage(t *testing.T) {
 						SwVersion:        "app v0.0.1",
 					},
 					UniqueID:     "blind1",
+					Name:         "blind1",
 					CommandTopic: "foo/blind1/set",
 					Icon:         "mdi:blinds",
 				},
