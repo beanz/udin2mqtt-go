@@ -26,7 +26,7 @@ import (
 const appName = "udin2mqtt"
 
 // Version is overridden at build time
-var Version = "0.0.0+Dev"
+var Version = "0.0.1+Dev"
 
 const (
 	// exitFail is the exit code if the program
