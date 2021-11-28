@@ -74,9 +74,6 @@ func run(args []string, stdout io.Writer, v *viper.Viper) error {
 		v.Set("UI_Advertise", v.GetString("UI"))
 	}
 
-	if v.GetString("Discovery_Prefix") == "homeassistant" {
-		panic("default discovery prefix")
-	}
 	if v.GetInt("Verbose") > 0 {
 		settings, err := json.MarshalIndent(v.AllSettings(), "", "  ")
 		if err != nil {
