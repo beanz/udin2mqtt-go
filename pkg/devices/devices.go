@@ -39,7 +39,7 @@ func kindFromArg(kind string) (RelayType, error) {
 	return UnsupportedRelayType, fmt.Errorf("invalid relay type: %s", kind)
 }
 
-func (d *Devices) Create(def []string, enabled bool) (*Device, error) {
+func (d *Devices) Create(def []string, enabled bool, icon string) (*Device, error) {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	name := def[0]
@@ -52,6 +52,7 @@ func (d *Devices) Create(def []string, enabled bool) (*Device, error) {
 		Type:    t,
 		Def:     def[2:],
 		Enabled: enabled,
+		Icon:    icon,
 	}
 	return d.dev[name], nil
 }

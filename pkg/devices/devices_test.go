@@ -41,7 +41,7 @@ func Test_Create(t *testing.T) {
 	}
 	devs := NewDevices(udins)
 	dev, err := devs.Create(
-		[]string{"foobar", "0", "udin_8r-r1", "udin_8r-r2"}, false)
+		[]string{"foobar", "0", "udin_8r-r1", "udin_8r-r2"}, false, "")
 	assert.Equal(t, "foobar", dev.Name)
 
 	devList := devs.Devices()
@@ -76,7 +76,7 @@ func Test_CreateError(t *testing.T) {
 	}
 	devs := NewDevices(udins)
 	_, err = devs.Create(
-		[]string{"foobar", "99", "udin_8r-r1", "udin_8r-r2"}, false)
+		[]string{"foobar", "99", "udin_8r-r1", "udin_8r-r2"}, false, "")
 	assert.Error(t, err)
 
 	assert.Equal(t, "unsupportedrelaytype", UnsupportedRelayType.String())

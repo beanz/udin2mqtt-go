@@ -114,7 +114,8 @@ func run(args []string, stdout io.Writer, v *viper.Viper) error {
 		args := []string{name, v.GetString("device." + name + ".kind")}
 		args = append(args, v.GetStringSlice("device."+name+".def")...)
 		enabled := v.GetBool("device." + name + ".enabled")
-		dev, err := devices.Create(args, enabled)
+		icon := v.GetString("device." + name + ".icon")
+		dev, err := devices.Create(args, enabled, icon)
 		if err != nil {
 			return fmt.Errorf("unable to create device %s: %+v", name, err)
 		}
@@ -209,7 +210,7 @@ LOOP:
 				msg.Retain = true
 				msgp <- msg
 			case ui.UICreateEvent:
-				dev, err := devices.Create(uie.Args, false)
+				dev, err := devices.Create(uie.Args, false, "")
 				if err != nil {
 					fmt.Fprintf(stdout, "failed to create device: %+v\n", err)
 					continue

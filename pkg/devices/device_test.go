@@ -53,6 +53,7 @@ func Test_DiscoveryMessage(t *testing.T) {
 					},
 					UniqueID:     "blind1",
 					CommandTopic: "foo/blind1/set",
+					Icon:         "mdi:blinds",
 				},
 			},
 		},

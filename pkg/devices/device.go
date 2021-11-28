@@ -31,6 +31,7 @@ type Device struct {
 	Type    RelayType
 	Def     []string
 	Enabled bool
+	Icon    string
 }
 
 type Action struct {
@@ -83,6 +84,10 @@ func (d *Device) DiscoveryMessage(cfg types.SimpleStringConfig) (*mqtt.Msg, erro
 			),
 		},
 	}
+	icon := d.Icon
+	if icon == "" {
+		icon = "mdi:blinds"
+	}
 	switch d.Type {
 	case MomentaryOpenClose:
 		return &mqtt.Msg{
@@ -94,6 +99,7 @@ func (d *Device) DiscoveryMessage(cfg types.SimpleStringConfig) (*mqtt.Msg, erro
 				Device:       defaultHADevice,
 				Availability: defaultAvailability,
 				UniqueID:     d.Name,
+				Icon:         icon,
 			},
 		}, nil
 	default:
