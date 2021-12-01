@@ -243,13 +243,11 @@ LOOP:
 			}
 			switch act.Action {
 			case "pulse":
-				go func() {
-					err := u.Pulse(act.Relay, time.Second)
-					if err != nil {
-						logger.Printf("failed to pulse relay %d on %s: %s\n",
-							act.Relay, act.Udin, err)
-					}
-				}()
+				err := u.Pulse(act.Relay, time.Second)
+				if err != nil {
+					logger.Printf("failed to pulse relay %d on %s: %s\n",
+						act.Relay, act.Udin, err)
+				}
 			default:
 				logger.Printf("invalid UDIN action %s for %s\n",
 					act.Action, devName)
