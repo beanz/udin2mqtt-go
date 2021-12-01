@@ -97,6 +97,15 @@ func run(args []string, stdout io.Writer, v *viper.Viper) error {
 		name := uidSafe(u.Name())
 		logger.Printf("found UDIN device %s\n", u)
 		udins[name] = u
+		logger.Printf("Resetting relays\n")
+		err = u.Status(0) // query status
+		if err != nil {
+			return fmt.Errorf("failed to query status: %+v", err)
+		}
+		err = u.Off(0) // switch off all relays on startup
+		if err != nil {
+			return fmt.Errorf("failed to reset device: %+v", err)
+		}
 	}
 
 	// Set up channel on which to send signal notifications.

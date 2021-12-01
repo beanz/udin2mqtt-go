@@ -149,6 +149,9 @@ func (u *UdinDevice) Send(r UdinRequest) (string, error) {
 		return "", fmt.Errorf("udin write failed: %+v", err)
 	}
 	s, err := u.reader.ReadString('\n')
+	if u.logger != nil {
+		u.logger.Printf("wrote: %s\n", cmd)
+	}
 	if err != nil {
 		return "", fmt.Errorf("udin read failed: %+v", err)
 	}
@@ -200,6 +203,14 @@ func NewUdin(dev string, logger *log.Logger) (*UdinDevice, error) {
 		return NewUdinMock(dev, logger)
 	}
 	return NewUdinSerial(dev, logger)
+}
+
+func (u *UdinDevice) Status(r uint) error {
+	if r > u.numRelays {
+		return fmt.Errorf("invalid relay %d", r)
+	}
+	_, err := u.Send(UdinRequest{Command: UdinStatus, Instance: r})
+	return err
 }
 
 func (u *UdinDevice) On(r uint) error {
