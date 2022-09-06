@@ -133,8 +133,8 @@ func Test_Udin(t *testing.T) {
 	var buf bytes.Buffer
 	logger := log.New(&buf, "", 0)
 	u, err := NewUdin("mock", logger)
-	defer u.Close()
 	assert.NoError(t, err)
+	defer u.Close()
 	resp, err := u.Send(UdinRequest{UdinOn, 1})
 	assert.NoError(t, err)
 	assert.Equal(t, "n1", resp)

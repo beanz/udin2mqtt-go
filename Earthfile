@@ -29,7 +29,7 @@ lint:
   COPY *.go .
   COPY pkg/ pkg/
   RUN CGO_ENABLED=0 go vet
-  RUN golangci-lint run --tests=false
+  RUN golangci-lint run
 
 test:
   FROM +deps

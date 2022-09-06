@@ -11,6 +11,7 @@ func Test_Devices(t *testing.T) {
 	u8r, err := udin.NewUdin("mock", nil)
 	assert.NoError(t, err)
 	u44, err := udin.NewUdin("mock:UDIN-44", nil)
+	assert.NoError(t, err)
 	udins := map[string]*udin.UdinDevice{
 		"udin_8r": u8r,
 		"udin_44": u44,
@@ -42,6 +43,7 @@ func Test_Create(t *testing.T) {
 	devs := NewDevices(udins)
 	dev, err := devs.Create(
 		[]string{"foobar", "0", "udin_8r-r1", "udin_8r-r2"}, false, "")
+	assert.NoError(t, err)
 	assert.Equal(t, "foobar", dev.Name)
 
 	devList := devs.Devices()

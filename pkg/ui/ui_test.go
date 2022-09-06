@@ -31,7 +31,6 @@ func (w BrokenWriter) Result() *http.Response {
 }
 
 func Test_Router(t *testing.T) {
-
 	tests := []struct {
 		name   string
 		uri    string
