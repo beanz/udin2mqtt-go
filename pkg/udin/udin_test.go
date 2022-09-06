@@ -144,11 +144,15 @@ func Test_Udin(t *testing.T) {
 	resp, err = u.Send(UdinRequest{UdinQuery, 0})
 	assert.NoError(t, err)
 	assert.Equal(t, "UDIN-8R 8 x Relay V1.0", resp)
-	assert.Equal(t, `read: ? [63 13 10]
+	assert.Equal(t, `wrote: ?
+read: ? [63 13 10]
 read model: UDIN-8R 8 x Relay V1.0 [85 68 73 78 45 56 82 32 56 32 120 32 82 101 108 97 121 32 86 49 46 48 13 10]
 found device udin-8r: UDIN-8R 8 x Relay V1.0
+wrote: n1
 read: n1 [110 49 13 10]
+wrote: f2
 read: f2 [102 50 13 10]
+wrote: ?
 read: ? [63 13 10]
 read model: UDIN-8R 8 x Relay V1.0 [85 68 73 78 45 56 82 32 56 32 120 32 82 101 108 97 121 32 86 49 46 48 13 10]
 `,
@@ -163,9 +167,11 @@ func Test_On(t *testing.T) {
 	defer u.Close()
 	err = u.On(1)
 	assert.NoError(t, err)
-	assert.Equal(t, `read: ? [63 13 10]
+	assert.Equal(t, `wrote: ?
+read: ? [63 13 10]
 read model: UDIN-8R 8 x Relay V1.0 [85 68 73 78 45 56 82 32 56 32 120 32 82 101 108 97 121 32 86 49 46 48 13 10]
 found device udin-8r: UDIN-8R 8 x Relay V1.0
+wrote: n1
 read: n1 [110 49 13 10]
 `,
 		buf.String())
@@ -181,9 +187,11 @@ func Test_Off(t *testing.T) {
 	defer u.Close()
 	err = u.Off(3)
 	assert.NoError(t, err)
-	assert.Equal(t, `read: ? [63 13 10]
+	assert.Equal(t, `wrote: ?
+read: ? [63 13 10]
 read model: UDIN-8R 8 x Relay V1.0 [85 68 73 78 45 56 82 32 56 32 120 32 82 101 108 97 121 32 86 49 46 48 13 10]
 found device udin-8r: UDIN-8R 8 x Relay V1.0
+wrote: f3
 read: f3 [102 51 13 10]
 `,
 		buf.String())
@@ -199,10 +207,13 @@ func Test_Pulse(t *testing.T) {
 	defer u.Close()
 	err = u.Pulse(3, time.Millisecond)
 	assert.NoError(t, err)
-	assert.Equal(t, `read: ? [63 13 10]
+	assert.Equal(t, `wrote: ?
+read: ? [63 13 10]
 read model: UDIN-8R 8 x Relay V1.0 [85 68 73 78 45 56 82 32 56 32 120 32 82 101 108 97 121 32 86 49 46 48 13 10]
 found device udin-8r: UDIN-8R 8 x Relay V1.0
+wrote: n3
 read: n3 [110 51 13 10]
+wrote: f3
 read: f3 [102 51 13 10]
 `,
 		buf.String())

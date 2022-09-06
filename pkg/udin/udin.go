@@ -158,19 +158,31 @@ func (u *UdinDevice) Send(r UdinRequest) (string, error) {
 	if u.logger != nil {
 		u.logger.Printf("read: %s %v\n", s[:len(s)-2], []byte(s))
 	}
-	if r.Command != UdinQuery {
+	switch r.Command {
+	case UdinQuery:
+		model, err := u.reader.ReadString('\n')
+		if err != nil {
+			return "", fmt.Errorf("udin model read failed: %+v", err)
+		}
+		if u.logger != nil {
+			u.logger.Printf("read model: %s %v\n",
+				model[:len(model)-2], []byte(model))
+		}
+		u.model = model[:len(model)-2]
+		return model[:len(model)-2], nil
+	case UdinStatus:
+		status, err := u.reader.ReadString('\n')
+		if err != nil {
+			return "", fmt.Errorf("udin status read failed: %+v", err)
+		}
+		if u.logger != nil {
+			u.logger.Printf("read status: %s %v\n",
+				status[:len(status)-2], []byte(status))
+		}
+		return status[:len(status)-2], nil
+	default:
 		return s[:len(s)-2], nil
 	}
-	model, err := u.reader.ReadString('\n')
-	if err != nil {
-		return "", fmt.Errorf("udin model read failed: %+v", err)
-	}
-	if u.logger != nil {
-		u.logger.Printf("read model: %s %v\n",
-			model[:len(model)-2], []byte(model))
-	}
-	u.model = model[:len(model)-2]
-	return model[:len(model)-2], nil
 }
 
 func (u *UdinDevice) String() string {
